@@ -1,0 +1,41 @@
+{
+  "name": "express-rest-api-starter",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "server.js",
+  "keywords": [],
+  "author": {
+    "name": "Dulan Hewage",
+    "email": "dulanhewage2@hotmail.com",
+    "url": "https://dulan.me"
+  },
+  "scripts": {
+    "dev": "nodemon",
+    "lint": "eslint . --fix",
+    "prettier": "prettier --write src/**/*.ts"
+  },
+  "license": "Apache License, Version 2.0",
+  "dependencies": {
+    "dotenv": "^16.3.2",
+    "express": "^4.18.2",
+    "mongoose": "^8.1.0",
+    "morgan": "^1.10.0",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@tsconfig/node20": "^20.1.2",
+    "@types/express": "^4.17.18",
+    "@types/morgan": "^1.9.6",
+    "@types/node": "^20.8.0",
+    "@typescript-eslint/eslint-plugin": "^6.7.3",
+    "@typescript-eslint/parser": "^6.7.3",
+    "eslint": "^8.50.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.2.4",
+    "ts-node": "^10.9.1",
+    "tsx": "^3.13.0"
+  }
+}
