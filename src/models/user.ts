@@ -19,15 +19,15 @@ const userSchema = new mongoose.Schema<IUserDocument>(
   {
     email: {
       type: String,
-      required: true,
+      required: [true, "Email is required."],
       unique: true,
       lowercase: true,
       trim: true,
-      minlength: 6,
+      minlength: [6, "Email must be at least 6 characters"],
     },
-    firstName: { type: String, required: true, trim: true, minlength: 2 },
-    lastName: { type: String, required: true, trim: true, minlength: 2 },
-    password: { type: String, required: true, trim: true, minlength: 8 },
+    firstName: { type: String, required: [true, "First Name is required."], trim: true, minlength: [2, "First Name must be at least 2 characters."] },
+    lastName: { type: String, required: [true, "Last Name is required."], trim: true, minlength: [2, "Last Name must be at least 2 characters."] },
+    password: { type: String, required: [true, "Password is required."], trim: true, minlength: [8, "Password must be at least 8 characters"] },
     verified: { type: Boolean, default: false },
     verificationToken: {
       type: String,
@@ -49,6 +49,16 @@ async function hashPassword(password: string): Promise<string> {
 
 // pre-save hook
 userSchema.pre<IUserDocument>("save", async function (next) {
+
+  // check if email exists
+  const emailExists = await User.findOne({ email: this.email });
+  if (emailExists) {
+    return next({
+      message: "Email already exists",
+      name: "Email",
+    });
+  }
+
   if (this.isModified("password")) {
     try {
       this.password = await hashPassword(this.password);

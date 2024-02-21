@@ -10,6 +10,8 @@
   "env": {
     "node": true
   },
-  "rules": {},
+  "rules": {
+    "@typescript-eslint/no-explicit-any": "off"
+  },
   "ignorePatterns": ["dist"]
 }
