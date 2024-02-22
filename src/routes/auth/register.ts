@@ -5,7 +5,7 @@ const router = Router();
 import { fieldError } from "../../types/validations.js";
 import { mapFieldValidationErrors } from "../../helpers/index.js";
 
-router.post("/user", async (req, res) => {
+router.post("/register", async (req, res) => {
   try {
     const { email, firstName, lastName, password } = req.body;
 

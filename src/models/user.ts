@@ -1,7 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-
+import jwt from "jsonwebtoken";
 interface IUser {
   email: string;
   firstName: string;
@@ -13,6 +13,8 @@ interface IUser {
 
 interface IUserDocument extends IUser, Document {
   _id: Schema.Types.ObjectId;
+  comparePassword: (password: string) => Promise<boolean>;
+  generateJwtToken: () => Promise<boolean>;
 }
 
 const userSchema = new mongoose.Schema<IUserDocument>(
@@ -25,9 +27,24 @@ const userSchema = new mongoose.Schema<IUserDocument>(
       trim: true,
       minlength: [6, "Email must be at least 6 characters"],
     },
-    firstName: { type: String, required: [true, "First Name is required."], trim: true, minlength: [2, "First Name must be at least 2 characters."] },
-    lastName: { type: String, required: [true, "Last Name is required."], trim: true, minlength: [2, "Last Name must be at least 2 characters."] },
-    password: { type: String, required: [true, "Password is required."], trim: true, minlength: [8, "Password must be at least 8 characters"] },
+    firstName: {
+      type: String,
+      required: [true, "First Name is required."],
+      trim: true,
+      minlength: [2, "First Name must be at least 2 characters."],
+    },
+    lastName: {
+      type: String,
+      required: [true, "Last Name is required."],
+      trim: true,
+      minlength: [2, "Last Name must be at least 2 characters."],
+    },
+    password: {
+      type: String,
+      required: [true, "Password is required."],
+      trim: true,
+      minlength: [8, "Password must be at least 8 characters"],
+    },
     verified: { type: Boolean, default: false },
     verificationToken: {
       type: String,
@@ -49,7 +66,6 @@ async function hashPassword(password: string): Promise<string> {
 
 // pre-save hook
 userSchema.pre<IUserDocument>("save", async function (next) {
-
   // check if email exists
   const emailExists = await User.findOne({ email: this.email });
   if (emailExists) {
@@ -75,6 +91,20 @@ userSchema.methods.comparePassword = async function comparePassword(
 ): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
 };
+
+userSchema.methods.generateJwtToken =
+  async function generateToken(): Promise<string> {
+    const token = jwt.sign(
+      {
+        id: this._id,
+      },
+      process.env.JWT_SECRET as string,
+      {
+        expiresIn: process.env.JWT_EXPIRY,
+      }
+    );
+    return token;
+  };
 
 const User: Model<IUserDocument> = mongoose.model("User", userSchema);
 
